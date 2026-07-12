@@ -48,7 +48,7 @@ export async function DELETE(req: NextRequest, { params }: Params) {
 
     if (!product) return errorResponse("Product not found", 404);
     if (product.createdBy !== (user as any).id) {
-      return errorResponse("Only you can delete your product", 403);
+      return errorResponse("Failed to update product", 403);
     }
 
     await productsCollection.deleteOne({ _id: new ObjectId(id) as any });
@@ -76,7 +76,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     if (!product) return errorResponse("Product not found", 404);
     if (product.createdBy !== (user as any).id) {
-      return errorResponse("Only you can update your product", 403);
+      return errorResponse("Failed to delete product", 403);
     }
 
     const body = await req.json();
