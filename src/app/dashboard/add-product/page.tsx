@@ -1,9 +1,10 @@
+import AddProductForm from '@/Components/Dashboard/AddProductForm';
 import React from 'react';
 
 const AddProductPage = () => {
     return (
         <div>
-            <h1>Add Product</h1>
+            <AddProductForm/>
         </div>
     );
 };
