@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import ThemeToggle from '../Theme/ThemeToggle';
 import { authClient } from '@/lib/auth-client';
+import Image from 'next/image';
 
 
 export default function Navbar() {
@@ -89,7 +90,7 @@ export default function Navbar() {
                   className="flex items-center space-x-2 p-1 rounded-full border border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all focus:outline-none"
                 >
                   {user.image ? (
-                    <img src={user.image} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
+                    <Image width={8} height={8} src={user.image} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
                   ) : (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-orange-600 text-white flex items-center justify-center font-bold text-sm uppercase">
                       {user.name?.[0]}

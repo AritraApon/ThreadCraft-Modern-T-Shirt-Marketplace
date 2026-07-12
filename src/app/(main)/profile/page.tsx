@@ -1,18 +1,19 @@
 'use client';
 
+
 import ProfileInfoCard from "@/Components/Profile/ProfileInfoCard";
 import { authClient } from "@/lib/auth-client";
-
+// import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
 import { UserSessionData } from "@/types/user";
-import { Loader2, LayoutDashboard } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
-export default function DashboardProfilePage() {
+export default function ProfilePage() {
   const { data: session, isPending } = authClient.useSession();
 
   if (isPending) {
     return (
-      <div className="w-full min-h-[50vh] flex items-center justify-center">
-        <Loader2 className="animate-spin text-amber-500" size={32} />
+      <div className="w-full min-h-[70vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-amber-500" size={36} />
       </div>
     );
   }
@@ -31,23 +32,21 @@ export default function DashboardProfilePage() {
   } : null;
 
   return (
-    <div className="w-full space-y-6 transition-colors duration-200">
+    <div className="max-w-5xl mx-auto space-y-8 p-4 sm:p-8 text-gray-900 dark:text-white transition-colors duration-200">
 
-      {/* ড্যাশবোর্ড ভাইব দেওয়ার জন্য একটা ছোট হেডার */}
       <div className="space-y-1 border-l-4 border-amber-500 pl-4">
-        <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2 tracking-tight">
-          <LayoutDashboard size={22} className="text-amber-500" />
-          Dashboard Profile Node
+        <h1 className="text-3xl font-black text-gray-900 dark:text-white flex items-center gap-2 tracking-tight">
+          Welcome back, {user?.name?.split(' ')[0] || 'Seller'}!
+          <Sparkles className="text-amber-500 dark:text-amber-400 fill-amber-500/20" size={24} />
         </h1>
-        <p className="text-xs text-gray-500 dark:text-gray-400">Review and configure your operational dashboard metrics.</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Manage and oversee your global profile operational nodes.</p>
       </div>
-
 
       {user ? (
         <ProfileInfoCard user={user} />
       ) : (
         <div className="p-12 text-center border border-dashed border-gray-200 dark:border-gray-800 rounded-2xl text-gray-400 text-sm">
-          No active dashboard session detected.
+          No authenticated session found.
         </div>
       )}
 
