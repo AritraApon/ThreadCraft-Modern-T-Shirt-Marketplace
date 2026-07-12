@@ -47,9 +47,9 @@ export async function DELETE(req: NextRequest, { params }: Params) {
     const product = await productsCollection.findOne({ _id: new ObjectId(id) as any });
 
     if (!product) return errorResponse("Product not found", 404);
-    if (product.createdBy !== (user as any).id) {
-      return errorResponse("Failed to update product", 403);
-    }
+   if (product.createdBy.toString() !== (user as any).id.toString()) {
+  return errorResponse("Failed to delete product", 403);
+}
 
     await productsCollection.deleteOne({ _id: new ObjectId(id) as any });
     return successResponse(null, "Product deleted successfully");
@@ -75,9 +75,9 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     const product = await productsCollection.findOne({ _id: new ObjectId(id) as any });
 
     if (!product) return errorResponse("Product not found", 404);
-    if (product.createdBy !== (user as any).id) {
-      return errorResponse("Failed to delete product", 403);
-    }
+   if (product.createdBy.toString() !== (user as any).id.toString()) {
+  return errorResponse("Failed to update product", 403);
+}
 
     const body = await req.json();
     delete body._id;
