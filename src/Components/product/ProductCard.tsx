@@ -12,15 +12,15 @@ interface ProductCardProps {
 export default function ProductCard({ product, index }: ProductCardProps) {
   return (
     <motion.div
-      // ১. পেজ বা ফিল্টার লোডের সময় স্মুথ এন্ট্রান্স অ্যানিমেশন
+
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.4,
-        delay: index * 0.05, // একটা একটা করে কার্ড স্মুথলি ভেসে উঠবে
+        delay: index * 0.05,
         ease: "easeOut"
       }}
-      // ২. হোভার করলে হালকা কার্ডটা উপরে উঠবে এবং গ্লো করবে
+
       whileHover={{ y: -6 }}
       className="group flex flex-col w-full h-[450px] bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-amber-500/30 dark:hover:border-amber-500/20 transition-all duration-300"
     >
@@ -91,7 +91,7 @@ export default function ProductCard({ product, index }: ProductCardProps) {
           </div>
 
           <Link
-            href={`/product/${product._id || product.id}`}
+            href={`/shop/${product._id || product.id}`}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-amber-500 dark:hover:bg-amber-500 hover:text-white dark:hover:text-white text-xs font-bold transition-all shadow-sm group-hover:scale-105"
           >
             <span>View Details</span>
