@@ -20,7 +20,7 @@ export default function DashboardProfilePage() {
   const rawUser = session?.user;
 
   const user: UserSessionData | null = rawUser ? {
-    _id: (rawUser as any).id || "6a535b339aefd968ac60443e",
+    _id: (rawUser as any).id ,
     name: rawUser.name,
     email: rawUser.email,
     emailVerified: rawUser.emailVerified || false,

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Categories from '@/Components/home/Categories';
 import FAQ from '@/Components/home/FAQ';
 import FeaturedProducts from '@/Components/home/FeaturedProducts';

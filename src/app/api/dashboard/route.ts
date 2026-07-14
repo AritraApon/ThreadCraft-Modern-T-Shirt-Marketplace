@@ -21,7 +21,8 @@ export async function GET(req: NextRequest) {
 
     const categoryMap: Record<string, number> = {};
     myProducts.forEach((p) => {
-      categoryMap[p.category] = (categoryMap[p.category] || 0) + 1;
+      const categoryName = p.category || "Unknown";
+      categoryMap[categoryName] = (categoryMap[categoryName] || 0) + 1;
     });
     const productsByCategory = Object.entries(categoryMap).map(([category, count]) => ({ category, count }));
 

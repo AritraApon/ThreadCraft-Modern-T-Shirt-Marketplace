@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
     const database = await getDb();
     const productsCollection = database.collection<Product>("products");
 
-    const product = await productsCollection.findOne({ _id: new ObjectId(id) });
+    const product = await productsCollection.findOne({ _id: new ObjectId(id) as any });
 
     if (!product) {
       return errorResponse("প্রোডাক্টটি পাওয়া যায়নি", 404);
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) { // 🎯
     const productsCollection = database.collection<Product>("products");
 
     // প্রথমে চেক করে নিচ্ছি প্রোডাক্টটি আসলেই এই সেলারের কিনা
-    const product = await productsCollection.findOne({ _id: new ObjectId(id) });
+    const product = await productsCollection.findOne({ _id: new ObjectId(id) as any });
     if (!product) return errorResponse("প্রোডাক্টটি পাওয়া যায়নি", 404);
 
     // 🎯 ObjectId ও String ম্যাচ করানোর জন্য দুটাকেই toString() এ কনভার্ট করা হলো
@@ -86,7 +86,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) { // 🎯
 
     // ডাটাবেজে আপডেট পাঠানো
     await productsCollection.updateOne(
-      { _id: new ObjectId(id) },
+      { _id: new ObjectId(id) as any },
       { $set: body }
     );
 
@@ -117,7 +117,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
     const productsCollection = database.collection<Product>("products");
 
     // প্রোডাক্ট চেক করা
-    const existingProduct = await productsCollection.findOne({ _id: new ObjectId(id) });
+    const existingProduct = await productsCollection.findOne({ _id: new ObjectId(id) as any});
     if (!existingProduct) {
       return errorResponse("প্রোডাক্টটি পাওয়া যায়নি", 404);
     }
@@ -127,7 +127,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       return errorResponse("আপনি এই প্রোডাক্টটি ডিলিট করার অধিকারী নন", 403);
     }
 
-    await productsCollection.deleteOne({ _id: new ObjectId(id) });
+    await productsCollection.deleteOne({ _id: new ObjectId(id) as any });
 
     return successResponse(null, "Product deleted successfully");
   } catch (error) {

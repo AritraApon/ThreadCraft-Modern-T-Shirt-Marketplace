@@ -7,6 +7,7 @@ import { Eye, Edit, Trash2, Search, ChevronLeft, ChevronRight } from 'lucide-rea
 import Image from 'next/image';
 import EditProductModal from './EditProductModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
+import Link from 'next/link';
 
 export default function ManageProductsTable() {
     const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -129,7 +130,7 @@ export default function ManageProductsTable() {
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-1.5">
                                                 {/* 👁️ ভিউ / ডিটেইলস বাটন (প্রয়োজন হলে লিংকে রূপান্তর করতে পারো) */}
-                                                <button onClick={() => console.log("View Product Details:", product._id)} className="p-1.5 text-gray-400 hover:text-amber-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Eye size={15} /></button>
+                                                <Link href={`/shop/${product._id || product.id}`} className="p-1.5 text-gray-400 hover:text-amber-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Eye size={15} /></Link>
                                                 {/* 📝 এডিট বাটন */}
                                                 <button onClick={() => { setSelectedProduct(product); setIsEditOpen(true); }} className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Edit size={15} /></button>
                                                 {/* 🗑️ ডিলিট বাটন */}
@@ -166,7 +167,7 @@ export default function ManageProductsTable() {
             </div>
 
             {/* মোডালগুলো সাকসেস হলে ডাটা রি-ফেচ করবে */}
-            
+
             <EditProductModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} product={selectedProduct} onSuccess={fetchProducts} />
             <DeleteConfirmModal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} product={selectedProduct} onSuccess={fetchProducts} />
         </div>

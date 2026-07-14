@@ -23,7 +23,7 @@ export default function Navbar() {
 
   const user = session?.user;
   // Better Auth-এ রোল সাধারণত user.role বা custom claims-এ থাকে। ধরি user.role-এই আছে।
-  const isSeller = user?.role === 'seller';
+const isSeller = (user as any)?.role === 'seller';
 
   const navLinks = [
     { name: 'Home', href: '/' },

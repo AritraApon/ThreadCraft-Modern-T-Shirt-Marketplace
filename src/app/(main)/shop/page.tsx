@@ -2,7 +2,7 @@
 import ProductCard from '@/Components/product/ProductCard';
 import ProductFilters from '@/Components/product/ProductFilters';
 import ProductPagination from '@/Components/product/ProductPagination';
-import { getProducts } from '@/lib/actions/product.action'; // তোমার রিয়েল অ্যাকশন
+import { getProducts } from '@/lib/actions/product.action';
 
 interface PageProps {
   searchParams: Promise<{
@@ -44,8 +44,8 @@ export default async function AllProductPage({ searchParams }: PageProps) {
       {/* ডেস্কটপে নিখুঁত ৪টি করে কার্ডের রো (Responsive Grid Layout) */}
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-          {products.map((product: any) => (
-            <ProductCard key={product._id || product.id} product={product} />
+          {products.map((product: any ,index: number) => (
+            <ProductCard index={index} key={product._id || product.id} product={product} />
           ))}
         </div>
       ) : (

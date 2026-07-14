@@ -13,6 +13,8 @@ interface InfoCardProps {
   user: UserSessionData;
 }
 
+
+
 export default function ProfileInfoCard({ user }: InfoCardProps) {
   const router = useRouter();
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
@@ -83,7 +85,7 @@ export default function ProfileInfoCard({ user }: InfoCardProps) {
                 <Key size={14} className="text-amber-500" />
                 <span className="text-[11px] font-bold uppercase tracking-widest">Document unique identifier (_id)</span>
               </div>
-              <p className="text-base font-bold font-mono text-gray-900 dark:text-amber-400 select-all break-all">{user._id}</p>
+              <p className="text-base font-bold font-mono text-gray-900 dark:text-amber-400 select-all break-all">{user._id.toString()}</p>
             </div>
 
             {/* Profile Name Box */}

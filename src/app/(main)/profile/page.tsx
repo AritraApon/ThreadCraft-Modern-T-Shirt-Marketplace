@@ -3,8 +3,9 @@
 
 import ProfileInfoCard from "@/Components/Profile/ProfileInfoCard";
 import { authClient } from "@/lib/auth-client";
-// import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
 import { UserSessionData } from "@/types/user";
+// import ProfileInfoCard from "@/components/profile/ProfileInfoCard";
+
 import { Loader2, Sparkles } from "lucide-react";
 
 export default function ProfilePage() {
@@ -21,7 +22,8 @@ export default function ProfilePage() {
   const rawUser = session?.user;
 
   const user: UserSessionData | null = rawUser ? {
-    _id: (rawUser as any).id || "6a535b339aefd968ac60443e",
+    id: (rawUser as any).id ,
+    _id: (rawUser as any).id ,
     name: rawUser.name,
     email: rawUser.email,
     emailVerified: rawUser.emailVerified || false,

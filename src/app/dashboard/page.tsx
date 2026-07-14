@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from 'next/link';
 
 import { Package, Layers, Layers3, ArrowLeft, Eye, AlertTriangle } from 'lucide-react';

@@ -54,7 +54,7 @@ export default function DashboardCharts({ productsByCategory, monthlyAdded }: Ch
 
         <div className="w-full h-[260px] text-xs">
           {barChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" h="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" className="dark:stroke-gray-900" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} stroke="#9CA3AF" />
@@ -86,7 +86,7 @@ export default function DashboardCharts({ productsByCategory, monthlyAdded }: Ch
 
         <div className="w-full h-[220px] flex items-center justify-center text-xs">
           {pieChartData.length > 0 ? (
-            <ResponsiveContainer width="100%" h="100%">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={pieChartData}
