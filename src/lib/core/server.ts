@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 // Server Component / Server Action থেকে call করলে browser cookie auto যায় না,
 // তাই manually cookie forward করে দেওয়া হচ্ছে।
