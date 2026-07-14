@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PlusCircle, User, Menu, X, Shirt, MenuSquare } from 'lucide-react';
+import { PlusCircle, User, Menu, X, Shirt, MenuSquare, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ThemeToggle from '../Theme/ThemeToggle';
 
@@ -13,6 +13,7 @@ export default function DashboardSidebar() {
   const [isOpen, setIsOpen] = useState(false); // মোবাইল মেনু স্টেট
 
   const menuItems = [
+    { name: 'Overview', href: '/dashboard', icon: Home },
     { name: 'Add Product', href: '/dashboard/add-product', icon: PlusCircle },
     { name: 'Manage Products', href: '/dashboard/manage-products', icon: MenuSquare },
     { name: 'My Profile', href: '/dashboard/profile', icon: User },

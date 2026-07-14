@@ -40,6 +40,9 @@ export default function ProductInfo({ product }: InfoProps) {
         <span className="text-xs text-gray-400">|</span>
         <span className="text-xs text-gray-500 dark:text-gray-400">Category: <span className="font-semibold text-gray-700 dark:text-gray-300">{product.category}</span></span>
       </div>
+      <div>
+        <p>{product.shortDescription}</p>
+      </div>
 
       {/* Price Block */}
       <div className="py-2">

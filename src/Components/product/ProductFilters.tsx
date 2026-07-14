@@ -56,7 +56,7 @@ export default function ProductFilters() {
             <option value="T-Shirt">T-Shirt</option>
             <option value="Jersey">Jersey</option>
             <option value="Polo">Polo T-Shirt</option>
-            <option value="Solid">Solid Crewneck</option>
+            <option value="Sweatshirt">Sweatshirt</option>
           </select>
         </div>
 

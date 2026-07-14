@@ -96,19 +96,18 @@ const handleUpdate = async (e: FormEvent) => {
       const res = await updateProduct(productId, updatedData);
       setIsLoading(false);
 
-      // 🔍 ব্রাউজার কনসোলে চেক করার জন্য প্রিন্ট
       console.log("--- EDIT RESPONSE START ---");
       console.log("Raw Server Action Response:", res);
       console.log("--- EDIT RESPONSE END ---");
 
-      // ব্যাকএন্ড এপিআই সাকসেস হলে কোনো এরর স্ট্রিং থাকার কথা না
-      if (res && !res.error) {
+      // 🎯 ব্যাকএন্ড সাকসেস কন্ডিশন সেফগার্ড (res.success অথবা এরর না থাকলে)
+      if (res && (res.success === true || !res.error || res.status === 200)) {
         toast.success("Product updated successfully!");
-        onSuccess();
-        onClose();
+        onSuccess(); // টেবিল রি-ফেচ করবে
+        onClose();   // মোডাল ক্লোজ করবে
       } else {
-        // যদি রেসপন্সে স্পেসিফিক কোনো মেসেজ থাকে সেটা দেখাবে, নয়তো ডিফল্ট স্ট্রিং
-        const serverError = res?.error || res?.message || JSON.stringify(res);
+        // যদি ব্যাকএন্ড কোনো স্পেসিফিক এরর মেসেজ পাঠায়
+        const serverError = res?.error || res?.message || "Something went wrong on backend";
         toast.error(`Backend Error: ${serverError}`);
       }
     } catch (err: any) {

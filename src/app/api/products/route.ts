@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db"; // 💡 প্রক্সি db এর বদলে আসল getDb হেল্পার ইম্পোর্ট করলাম
 import { successResponse, errorResponse } from "@/lib/apiResponse";
-// import { requireSeller } from "@/lib/getSessionUser";
 import { Product } from "@/models/Product";
 import { requireSeller } from "@/lib/getSessionUser";
 
@@ -20,7 +19,9 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
 
-    const productsCollection = db.collection<Product>("products");
+    // 🎯 মঙ্গোডিবির লাইভ ডাটাবেস ইনস্ট্যান্স এবং নেটিভ কালেকশন রিলিজ করা
+    const database = await getDb();
+    const productsCollection = database.collection<Product>("products");
 
     const query: any = {};
     if (search) query.title = { $regex: search, $options: "i" };
@@ -40,6 +41,7 @@ export async function GET(req: NextRequest) {
 
     const skip = (page - 1) * limit;
 
+    // ⚡ প্রমিজ চেইনিং টাইপ লিক ছাড়া একদম নেটিভ স্পীডে ডাটা ফেচ হবে
     const [products, total] = await Promise.all([
       productsCollection.find(query).sort(sortQuery).skip(skip).limit(limit).toArray(),
       productsCollection.countDocuments(query),
@@ -50,7 +52,7 @@ export async function GET(req: NextRequest) {
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (error) {
-    console.error(error);
+    console.error("❌ GET PRODUCTS API ERROR:", error);
     return errorResponse("Server error", 500);
   }
 }
@@ -68,7 +70,9 @@ export async function POST(req: NextRequest) {
       return errorResponse("Title, brand, category, price আবশ্যক", 400);
     }
 
-    const productsCollection = db.collection<Product>("products");
+    // 🎯 ডাটাবেস কালেকশন হ্যান্ডলার
+    const database = await getDb();
+    const productsCollection = database.collection<Product>("products");
 
     const newProduct: Product = {
       title,
@@ -91,7 +95,7 @@ export async function POST(req: NextRequest) {
 
     return successResponse({ ...newProduct, _id: result.insertedId }, "Product created", 201);
   } catch (error) {
-    console.error(error);
+    console.error("❌ POST PRODUCT API ERROR:", error);
     return errorResponse("Server error", 500);
   }
 }

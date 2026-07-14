@@ -6,7 +6,6 @@ import ProductInfo from '@/Components/product/ProductInfo';
 import ProductTabs from '@/Components/product/ProductTabs';
 import RelatedProducts from '@/Components/product/RelatedProducts';
 
-
 interface PageProps {
   params: Promise<{ id: string }>;
 }
@@ -19,12 +18,12 @@ export default async function ProductDetailsPage({ params }: PageProps) {
   // 2. Load payload structure from the backend API response
   const response = await getProductDetails(id);
 
-  // Safe extraction based on successResponse wrapper
-  const product = response?.data?.product || response?.product;
-  const relatedProducts = response?.data?.relatedProducts || response?.relatedProducts || [];
+  // 🎯 সেফ এক্সট্রাকশন - রেসপন্স সরাসরি প্রোডাক্ট হতে পারে কিংবা response.data হতে পারে
+  const product = response?.product || response?.data || response;
+  const relatedProducts = response?.relatedProducts || [];
 
   // Fallback state if entity is missing
-  if (!product) {
+  if (!product || !product._id) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-16 text-center space-y-4">
         <p className="text-gray-500">Requested product asset node could not be retrieved.</p>
@@ -36,7 +35,8 @@ export default async function ProductDetailsPage({ params }: PageProps) {
   }
 
   // Handle singular or array mapping safely for the gallery engine
-const imageList = product.images || (Array.isArray(product.image) ? product.image : [product.image]);
+  const imageList = product.images || (Array.isArray(product.image) ? product.image : [product.image]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10 min-h-screen">
 

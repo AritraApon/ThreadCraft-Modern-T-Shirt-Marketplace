@@ -1,85 +1,94 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+// 🎯 এখানে তোমার সব প্রোডাক্ট আনার সার্ভার অ্যাকশনটি ইমপোর্ট করো (যেমন: getProducts)
 import { getProducts } from "@/lib/actions/product.action";
-import { Eye, Edit, Trash2, Search, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
+import { Eye, Edit, Trash2, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import EditProductModal from './EditProductModal';
 import DeleteConfirmModal from './DeleteConfirmModal';
-// import ViewProductModal from './ViewProductModal';
-// import EditProductModal from './EditProductModal';
-// import DeleteConfirmModal from './DeleteConfirmModal';
 
 export default function ManageProductsTable() {
-    const [products, setProducts] = useState<any[]>([]);
-    const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
-
-    // Filter & Query States
-    const [search, setSearch] = useState('');
-    const [category, setCategory] = useState('');
-    const [sort, setSort] = useState('newest');
-    const [page, setPage] = useState(1);
+    const [allProducts, setAllProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    // Modals Core State
+    // ফ্রন্টএন্ড সার্চ ও পেজিনেশন স্টেটস
+    const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(1);
+    const itemsPerPage = 8;
+
+    // মোডাল স্টেটস
     const [selectedProduct, setSelectedProduct] = useState<any>(null);
-    const [isViewOpen, setIsViewOpen] = useState(false);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-    // Fetch Logic linked with backend GET params
-    // Fetch Logic linked with backend GET params
+    // 🔄 ডাটাবেজ থেকে সব প্রোডাক্ট একবারে নিয়ে আসার লজিক
     const fetchProducts = useCallback(async () => {
         setLoading(true);
-        let queryString = `?page=${page}&limit=8&sort=${sort}`;
-        if (search) queryString += `&search=${encodeURIComponent(search)}`;
-        if (category) queryString += `&category=${encodeURIComponent(category)}`;
+        try {
+            // ডিটেইলস পেজের অ্যাকশনে হাত না দিয়ে, জাস্ট নরমাল সব প্রোডাক্ট কল করা হচ্ছে
+            const res = await getProducts({});
 
-        const res = await getProducts(queryString);
-
-        console.log("API Response Context:", res);
-        if (res && !res.error) {
-
-            const rootData = res.data || res;
-
-            setProducts(rootData.products || []);
-            setPagination(rootData.pagination || { page: 1, totalPages: 1 });
-        } else {
-            setProducts([]);
+            if (res && res.success) {
+                // API রেসপন্স ডাটার শেপ অনুযায়ী প্রোডাক্ট সেট করা
+                const fetchedData = res.data?.products || res.data || [];
+                setAllProducts(Array.isArray(fetchedData) ? fetchedData : []);
+            } else {
+                setAllProducts([]);
+            }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            setAllProducts([]);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
-    }, [page, search, category, sort]);
+    }, []);
 
     useEffect(() => {
         fetchProducts();
     }, [fetchProducts]);
 
+    // 🔍 ফ্রন্টএন্ড সার্চ লজিক (ইনস্ট্যান্ট কাজ করবে)
+    const filteredProducts = useMemo(() => {
+        if (!searchQuery.trim()) return allProducts;
+
+        const query = searchQuery.toLowerCase().trim();
+        return allProducts.filter(product =>
+            product.title?.toLowerCase().includes(query) ||
+            product.category?.toLowerCase().includes(query)
+        );
+    }, [allProducts, searchQuery]);
+
+    // 📄 ফ্রন্টএন্ড পেজিনেশন ক্যালকুলেশন
+    const totalPages = Math.ceil(filteredProducts.length / itemsPerPage) || 1;
+
+    useEffect(() => {
+        if (page > totalPages) setPage(1);
+    }, [searchQuery, totalPages, page]);
+
+    const displayedProducts = useMemo(() => {
+        const startIndex = (page - 1) * itemsPerPage;
+        return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredProducts, page]);
+
     return (
         <div className="w-full space-y-4">
-            {/* Search, Sort and Filter UI Controls */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-between items-center bg-white dark:bg-[#161F30] p-4 rounded-xl border border-gray-100 dark:border-gray-800/80 transition-all">
+            {/* সার্চ বার */}
+            <div className="flex bg-white dark:bg-[#161F30] p-4 rounded-xl border border-gray-100 dark:border-gray-800/80">
                 <div className="relative w-full sm:max-w-xs">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                     <input
-                        type="text" placeholder="Search threads..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                        className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 text-gray-950 dark:text-white"
+                        type="text"
+                        placeholder="Search products..."
+                        value={searchQuery}
+                        onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                        className="w-full pl-9 pr-4 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent text-xs focus:outline-none text-gray-950 dark:text-white"
                     />
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                    <select
-                        value={sort} onChange={(e) => setSort(e.target.value)}
-                        className="px-3 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#161F30] text-xs focus:outline-none text-gray-700 dark:text-gray-300"
-                    >
-                        <option value="newest">Newest First</option>
-                        <option value="price_low">Price: Low to High</option>
-                        <option value="price_high">Price: High to Low</option>
-                    </select>
                 </div>
             </div>
 
-            {/* Main Responsive Table Box */}
-            <div className="w-full bg-white dark:bg-[#161F30] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden shadow-sm transition-all">
+            {/* প্রোডাক্ট টেবিল */}
+            <div className="w-full bg-white dark:bg-[#161F30] border border-gray-100 dark:border-gray-800/80 rounded-2xl overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -94,14 +103,14 @@ export default function ManageProductsTable() {
                         <tbody className="divide-y divide-gray-100 dark:divide-gray-800/60 text-xs text-gray-700 dark:text-gray-300">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center p-8 text-gray-400">Loading dynamic data streams...</td>
+                                    <td colSpan={5} className="text-center p-8 text-gray-400">Loading products...</td>
                                 </tr>
-                            ) : products.length === 0 ? (
+                            ) : displayedProducts.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="text-center p-8 text-gray-400">No products found matching query criteria.</td>
+                                    <td colSpan={5} className="text-center p-8 text-gray-400">No products found.</td>
                                 </tr>
                             ) : (
-                                products.map((product) => (
+                                displayedProducts.map((product) => (
                                     <tr key={product._id} className="hover:bg-gray-50/40 dark:hover:bg-gray-800/10 transition-colors">
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
@@ -119,8 +128,11 @@ export default function ManageProductsTable() {
                                         <td className="p-4 font-medium">{product.stock} pcs</td>
                                         <td className="p-4 text-right">
                                             <div className="flex items-center justify-end gap-1.5">
-                                                <button onClick={() => { setSelectedProduct(product); setIsViewOpen(true); }} className="p-1.5 text-gray-400 hover:text-amber-500 dark:hover:text-amber-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Eye size={15} /></button>
+                                                {/* 👁️ ভিউ / ডিটেইলস বাটন (প্রয়োজন হলে লিংকে রূপান্তর করতে পারো) */}
+                                                <button onClick={() => console.log("View Product Details:", product._id)} className="p-1.5 text-gray-400 hover:text-amber-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Eye size={15} /></button>
+                                                {/* 📝 এডিট বাটন */}
                                                 <button onClick={() => { setSelectedProduct(product); setIsEditOpen(true); }} className="p-1.5 text-gray-400 hover:text-blue-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Edit size={15} /></button>
+                                                {/* 🗑️ ডিলিট বাটন */}
                                                 <button onClick={() => { setSelectedProduct(product); setIsDeleteOpen(true); }} className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"><Trash2 size={15} /></button>
                                             </div>
                                         </td>
@@ -131,10 +143,10 @@ export default function ManageProductsTable() {
                     </table>
                 </div>
 
-                {/* Dynamic Pagination Footer Control */}
-                {pagination.totalPages > 1 && (
+                {/* পেজ কন্ট্রোল */}
+                {totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800/60 flex items-center justify-between text-xs">
-                        <span className="text-gray-400">Page {pagination.page} of {pagination.totalPages}</span>
+                        <span className="text-gray-400">Page {page} of {totalPages}</span>
                         <div className="flex items-center gap-1">
                             <button
                                 disabled={page === 1} onClick={() => setPage(prev => prev - 1)}
@@ -143,7 +155,7 @@ export default function ManageProductsTable() {
                                 <ChevronLeft size={14} />
                             </button>
                             <button
-                                disabled={page === pagination.totalPages} onClick={() => setPage(prev => prev + 1)}
+                                disabled={page === totalPages} onClick={() => setPage(prev => prev + 1)}
                                 className="p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 disabled:opacity-40 text-gray-500 dark:text-gray-400"
                             >
                                 <ChevronRight size={14} />
@@ -153,10 +165,9 @@ export default function ManageProductsTable() {
                 )}
             </div>
 
-            {/* Render Dynamic Actions Modals Safely */}
-            {/* <ViewProductModal isOpen={isViewOpen} onClose={() => setIsViewOpen(false)} product={selectedProduct} /> */}
+            {/* মোডালগুলো সাকসেস হলে ডাটা রি-ফেচ করবে */}
+            
             <EditProductModal isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} product={selectedProduct} onSuccess={fetchProducts} />
-
             <DeleteConfirmModal isOpen={isDeleteOpen} onClose={() => setIsDeleteOpen(false)} product={selectedProduct} onSuccess={fetchProducts} />
         </div>
     );

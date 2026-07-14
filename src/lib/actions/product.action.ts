@@ -1,15 +1,11 @@
 'use server';
 import { getMutation, postMutation, patchMutation, deleteMutation } from "../core/server";
 
-// shop page - search/filter/sort/pagination সহ (queryString যেমন: "?category=hoodie&page=1")
+// shop page - search/filter/sort/pagination সহ
 export const getProducts = async (params: any) => {
-  // ১. যদি params একটি Promise হয় (নেক্সটের নতুন ভার্সনে searchParams অনেক সময় প্রমিজ হয়)
-  // অথবা যদি সরাসরি অবজেক্ট আসে, সেটাকে সেফলি হ্যান্ডেল করার জন্য:
   const resolvedParams = await params;
-
   const searchParams = new URLSearchParams();
 
-  // ২. অবজেক্টের প্রতিটি কী (key) চেক করে স্ট্রিং প্যারামিটারে কনভার্ট করা
   if (resolvedParams?.search) searchParams.set('search', resolvedParams.search);
   if (resolvedParams?.category) searchParams.set('category', resolvedParams.category);
   if (resolvedParams?.sort) searchParams.set('sort', resolvedParams.sort);
@@ -18,17 +14,19 @@ export const getProducts = async (params: any) => {
   if (resolvedParams?.page) searchParams.set('page', resolvedParams.page);
   if (resolvedParams?.limit) searchParams.set('limit', resolvedParams.limit);
 
-  // ৩. কুয়েরি স্ট্রিং তৈরি করা
   const queryString = searchParams.toString();
-
-  // যদি কোনো ফিল্টার না থাকে তবে শুধু `/api/products` যাবে, আর থাকলে কুয়েরি সহ যাবে
   const url = queryString ? `/api/products?${queryString}` : '/api/products';
 
-  // ৪. এবার প্রোপার ইউআরএল স্ট্রিং পাস করো, কোনো অবজেক্ট সরাসরি যাবে না
   return await getMutation(url);
 };
 
+// 💡 প্রোডাক্টের ডিটেইলস আনার সেফগার্ড ফাংশন
 export const getProductDetails = async (id: string) => {
+  // যদি আইডি না থাকে, অথবা আইডি 'undefined' স্ট্রিং হিসেবে আসে
+  if (!id || id === 'undefined') {
+    console.error("⚠️ getProductDetails error: ID is missing or undefined");
+    return { success: false, error: "Product ID is required" };
+  }
   return await getMutation(`/api/products/${id}`);
 };
 
@@ -36,10 +34,18 @@ export const addProduct = async (data: any) => {
   return await postMutation(`/api/products`, data);
 };
 
+// 💡 আপডেট করার সেফগার্ড ফাংশন
 export const updateProduct = async (id: string, data: any) => {
+  if (!id || id === 'undefined') {
+    return { success: false, error: "Product ID is required for update" };
+  }
   return await patchMutation(`/api/products/${id}`, data);
 };
 
+// 💡 ডিলিট করার সেফগার্ড ফাংশন
 export const deleteProduct = async (id: string) => {
+  if (!id || id === 'undefined') {
+    return { success: false, error: "Product ID is required for deletion" };
+  }
   return await deleteMutation(`/api/products/${id}`);
 };
