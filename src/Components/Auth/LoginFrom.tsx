@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { authClient } from "@/lib/auth-client";
 import { toast } from 'react-toastify';
-import { Eye, EyeOff, Loader2, Shirt } from 'lucide-react';
+import { Eye, EyeOff, Loader2, Shirt, User, ShieldCheck } from 'lucide-react';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,9 +19,14 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Handle Form Submit
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email || !password) {
+  const handleLogin = async (e: FormEvent, demoEmail?: string, demoPassword?: string) => {
+    if (e) e.preventDefault();
+
+    // ডেমো বাটনের ডেটা থাকলে সেগুলো ব্যবহার করবে, না থাকলে স্টেট থেকে নেবে
+    const targetEmail = demoEmail || email;
+    const targetPassword = demoPassword || password;
+
+    if (!targetEmail || !targetPassword) {
       toast.error("Please fill all fields!");
       return;
     }
@@ -31,9 +36,9 @@ export default function LoginForm() {
     try {
       // Better Auth Sign In
       await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: "/", // লগইনের পর হোমে রিডাইরেক্ট হবে, তুমি চাইলে ড্যাশবোর্ডও দিতে পারো
+        email: targetEmail,
+        password: targetPassword,
+        callbackURL: "/",
         rememberMe: rememberMe
       }, {
         onRequest: () => setIsLoading(true),
@@ -52,6 +57,18 @@ export default function LoginForm() {
       setIsLoading(false);
       toast.error("An unexpected error occurred.");
     }
+  };
+
+  // ডেমো বাটনের ক্লিকের সাথে সাথে স্টেট আপডেট এবং লগইন কল হবে
+  const handleDemoLogin = async (role: 'seller' | 'buyer') => {
+    const demoEmail = role === 'seller' ? 'seller@seller.com' : 'buyer@buyer.com';
+    const demoPassword = role === 'seller' ? 'Seller123' : 'Buyer123';
+
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+
+    // অটো লগইন ট্রিগার করা হলো
+    await handleLogin(null as any, demoEmail, demoPassword);
   };
 
   const handleGoogleLogin = async () => {
@@ -73,7 +90,37 @@ export default function LoginForm() {
         <p className="text-xs text-gray-400 mt-1">Sign in to your ThreadCraft account</p>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      {/* 🎯 ডেমো ক্রেডেনশিয়ালস সেকশন (থিমের সাথে একদম পারফেক্টলি ম্যাচড) */}
+      <div className="mb-6 p-3.5 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/30">
+        <p className="text-[10px] font-bold uppercase tracking-wider text-center text-gray-400 dark:text-gray-500 mb-2.5">
+          Quick Demo Login
+        </p>
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* Buyer Demo Button */}
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => handleDemoLogin('buyer')}
+            className="flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs font-semibold rounded-lg border border-amber-500/20 dark:border-amber-500/10 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 dark:hover:bg-amber-500/15 active:scale-95 transition-all"
+          >
+            <User size={13} />
+            Demo Buyer
+          </button>
+
+          {/* Seller Demo Button */}
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => handleDemoLogin('seller')}
+            className="flex items-center justify-center gap-1.5 py-1.5 px-3 text-xs font-semibold rounded-lg border border-orange-500/20 dark:border-orange-500/10 bg-orange-500/10 hover:bg-orange-500/20 text-orange-600 dark:text-orange-400 dark:hover:bg-orange-500/15 active:scale-95 transition-all"
+          >
+            <ShieldCheck size={13} />
+            Demo Seller
+          </button>
+        </div>
+      </div>
+
+      <form onSubmit={(e) => handleLogin(e)} className="space-y-4">
         {/* Email Field */}
         <div>
           <label className="block text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Email Address</label>
