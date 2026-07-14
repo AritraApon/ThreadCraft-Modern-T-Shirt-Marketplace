@@ -61,8 +61,8 @@ export default function LoginForm() {
 
   // ডেমো বাটনের ক্লিকের সাথে সাথে স্টেট আপডেট এবং লগইন কল হবে
   const handleDemoLogin = async (role: 'seller' | 'buyer') => {
-    const demoEmail = role === 'seller' ? 'seller@seller.com' : 'buyer@buyer.com';
-    const demoPassword = role === 'seller' ? 'Seller123' : 'Buyer123';
+    const demoEmail = role === 'seller' ? 'seller' : 'buyer@buyer.com';
+    const demoPassword = role === 'seller' ? '404' : 'Buyer123';
 
     setEmail(demoEmail);
     setPassword(demoPassword);

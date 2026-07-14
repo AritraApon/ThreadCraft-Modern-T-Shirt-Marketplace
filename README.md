@@ -103,7 +103,7 @@ https://github.com/AritraApon/ThreadCraft-Modern-T-Shirt-Marketplace
 * TypeScript
 * MongoDB Atlas
 * Better Auth
-* JWT
+
 
 ## Deployment
 
@@ -136,12 +136,9 @@ src
 │── app
 │── components
 │── lib
-│── hooks
 │── providers
-│── services
 │── types
-│── utils
-│── middleware
+│── models
 ```
 
 ---
