@@ -95,7 +95,7 @@ export default function LoginForm() {
         <p className="text-[10px] font-bold uppercase tracking-wider text-center text-gray-400 dark:text-gray-500 mb-2.5">
           Quick Demo Login
         </p>
-        <div className="grid grid-cols-2 gap-2.5">
+        <div className="flex justify-center items-center">
           {/* Buyer Demo Button */}
           <button
             type="button"
@@ -108,7 +108,7 @@ export default function LoginForm() {
           </button>
 
           {/* Seller Demo Button */}
-          <button
+          {/* <button
             type="button"
             disabled={isLoading}
             onClick={() => handleDemoLogin('seller')}
@@ -116,7 +116,7 @@ export default function LoginForm() {
           >
             <ShieldCheck size={13} />
             Demo Seller
-          </button>
+          </button>  */}
         </div>
       </div>
 
