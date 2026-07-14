@@ -12,6 +12,11 @@ export const auth = betterAuth({
     client: dbClient as any,
   }),
 
+trustedOrigins: [
+    "https://thread-craft-modern-t-shirt-marketp.vercel.app", // তোমার প্রোডাকশন লিংক
+    "https://*.vercel.app" 
+  ],
+
    emailAndPassword: {
     enabled: true,
   },
