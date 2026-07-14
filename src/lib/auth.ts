@@ -9,12 +9,12 @@ const db = client.db('Thread-Craft');
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     // Optional: if you don't provide a client, database transactions won't be enabled.
-    client: dbClient as any,
+    // client: dbClient as any,
   }),
 
 trustedOrigins: [
     "https://thread-craft-modern-t-shirt-marketp.vercel.app", // তোমার প্রোডাকশন লিংক
-    "https://*.vercel.app" 
+    "https://*.vercel.app"
   ],
 
    emailAndPassword: {
