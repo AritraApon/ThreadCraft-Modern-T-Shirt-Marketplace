@@ -4,11 +4,22 @@ import { motion } from 'framer-motion';
 import { Quote, Star } from 'lucide-react';
 
 const REVIEWS = [
-  { name: "Asif Rahman", role: "Verified Buyer", text: "কাপড়ের কোয়ালিটি এক কথায় অসাধারণ! ২৪০ জিএসএম-এর ওভারসাইজড টি-শার্টটা সত্যি প্রিমিয়াম। ধোয়ার পরেও কালার বা ফেব্রিকের কোনো ক্ষতি হয়নি।" },
-  { name: "Tanvir Ahmed", role: "Verified Buyer", text: "The minimalist Pima tee fits perfectly. It feels incredibly premium on the skin. Will definitely order more colors soon!" },
-  { name: "Sajid Islam", role: "Verified Buyer", text: "পলো শার্টগুলোর ফিটিং দারুণ। কলারের গ্রিপটা একদম পারফেক্ট থাকে। ক্যাজুয়াল অফিস বা আউটডোরের জন্য বেস্ট।" }
+  {
+    name: "Asif Rahman",
+    role: "Verified Buyer",
+    text: "The fabric quality is simply outstanding! The 240 GSM oversized t-shirt feels truly premium. No fading or shrinkage even after washing."
+  },
+  {
+    name: "Tanvir Ahmed",
+    role: "Verified Buyer",
+    text: "The minimalist Pima tee fits perfectly. It feels incredibly premium on the skin. Will definitely order more colors soon!"
+  },
+  {
+    name: "Sajid Islam",
+    role: "Verified Buyer",
+    text: "The fit of the polo shirts is amazing. The collar grip stays perfectly in place. Best choice for casual office wear or outdoors."
+  }
 ];
-
 export default function Testimonials() {
   return (
     <section className="py-16 bg-white dark:bg-[#0F1322]/40">
