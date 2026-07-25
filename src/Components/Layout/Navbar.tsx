@@ -1,9 +1,9 @@
 // components/Navbar.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, UserPlus } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, UserPlus, ShoppingCart, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 
@@ -17,13 +17,35 @@ export default function Navbar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false); // মোবাইল মেনু
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // প্রোফাইল ড্রপডাউন
+  const [cartCount, setCartCount] = useState(0);
 
   // Better Auth Hooks integration
   const { data: session, isPending } = authClient.useSession();
 
   const user = session?.user;
   // Better Auth-এ রোল সাধারণত user.role বা custom claims-এ থাকে। ধরি user.role-এই আছে।
-const isSeller = (user as any)?.role === 'seller';
+  const isSeller = (user as any)?.role === 'seller';
+
+  // Fetch cart count and listen for updates
+  const fetchCartCount = async () => {
+    if (!user) { setCartCount(0); return; }
+    try {
+      const res = await fetch('/api/cart', { credentials: 'include', cache: 'no-store' });
+      const data = await res.json();
+      if (data.success) {
+        const items = data.data?.items || [];
+        setCartCount(items.reduce((sum: number, item: any) => sum + item.quantity, 0));
+      }
+    } catch { setCartCount(0); }
+  };
+
+  useEffect(() => {
+    fetchCartCount();
+    // Listen for cart updates dispatched from ProductInfo
+    window.addEventListener('cart-updated', fetchCartCount);
+    return () => window.removeEventListener('cart-updated', fetchCartCount);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const navLinks = [
     { name: 'Home', href: '/' },
@@ -79,6 +101,16 @@ const isSeller = (user as any)?.role === 'seller';
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
 
+            {/* Cart Icon with Badge */}
+            <Link href="/cart" className="relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-500 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all">
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 min-w-[18px] bg-amber-500 text-white text-[9px] font-black rounded-full flex items-center justify-center leading-none px-1">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
+
             {isPending ? (
               // Loading Skeleton State
               <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 animate-pulse" />
@@ -122,6 +154,10 @@ const isSeller = (user as any)?.role === 'seller';
                         <User size={16} className="text-gray-400" /> <span>My Profile</span>
                       </Link>
 
+                      <Link href="/orders" onClick={() => setIsDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                        <Package size={16} className="text-gray-400" /> <span>My Orders</span>
+                      </Link>
+
                       {/* Dropdown এর ভেতরের Dashboard */}
                       {isSeller && (
                         <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center space-x-2 px-4 py-2.5 hover:bg-amber-500/10 text-amber-500 transition-colors font-medium">
@@ -163,6 +199,15 @@ const isSeller = (user as any)?.role === 'seller';
 
           {/* Mobile Menu Button */}
           <div className="flex items-center space-x-2 md:hidden">
+            {/* Mobile Cart Icon */}
+            <Link href="/cart" className="relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:text-amber-500 transition-all">
+              <ShoppingCart size={20} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[16px] bg-amber-500 text-white text-[9px] font-black rounded-full flex items-center justify-center leading-none px-1">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
+            </Link>
             <ThemeToggle />
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -209,6 +254,10 @@ const isSeller = (user as any)?.role === 'seller';
 
                   <Link href="/profile" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <User size={18} /> Profile
+                  </Link>
+
+                  <Link href="/orders" onClick={() => setIsOpen(false)} className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <Package size={18} /> My Orders
                   </Link>
 
                   <button

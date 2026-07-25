@@ -6,6 +6,7 @@ export interface Product {
   description: string;
   category: string;
   price: number;
+  stock?: number;
   rating?: number;
   location?: string;
   destination?: string;

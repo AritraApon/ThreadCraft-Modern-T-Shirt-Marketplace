@@ -42,6 +42,13 @@ export default function ProductCard({ product, index }: ProductCardProps) {
             {product.category}
           </span>
         )}
+
+        {/* Out of stock badge */}
+        {product.stock !== undefined && Number(product.stock) <= 0 && (
+          <span className="absolute top-3 right-3 px-2.5 py-1 rounded-md bg-red-600/90 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+            Out of Stock
+          </span>
+        )}
       </div>
 
       {/* Content Section */}
