@@ -13,13 +13,24 @@ export const auth = betterAuth({
   }),
 
 trustedOrigins: [
-    "https://thread-craft-modern-t-shirt-marketp.vercel.app", // তোমার প্রোডাকশন লিংক
+    "https://thread-craft-modern-t-shirt-marketp.vercel.app",
     "https://*.vercel.app"
   ],
 
    emailAndPassword: {
     enabled: true,
   },
+
+
+ socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        },
+    },
+
+
+
 
     user: {
     additionalFields: {
